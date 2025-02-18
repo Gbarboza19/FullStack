@@ -1,0 +1,24 @@
+h1{
+    color: hotpink;
+}
+#Hip{
+    color: green;
+    font-size: large;
+}
+.musicas_hiphop{
+    color: yellow;
+}
+#funk{
+    color: blue;
+    font-size: large;
+}
+.musicas_funk{
+    color: red;
+}
+#cantores{
+    color: chartreuse;
+    font-size: large;
+}
+#artistas:hover{
+color: chartreuse;
+}
