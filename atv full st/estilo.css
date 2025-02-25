@@ -3,10 +3,32 @@
 }
 img{
     height: 300px;
+    width: 500px;
 }
 #fotos{
     color: red;
 }
 table,td{
+   
     border:1px solid
+}
+
+#tudo{
+    text-align: center;
+}
+
+h2{
+    color: olive;
+}
+
+p{
+    color: black;
+}
+
+body {
+   
+
+    margin: 0;
+    background-color: peachpuff; 
+    font-family: Arial, sans-serif;
 }
