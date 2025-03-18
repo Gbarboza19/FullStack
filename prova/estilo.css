@@ -1,0 +1,54 @@
+.body{
+    background-color: grey;
+}
+
+
+.flex{
+    display: flex;
+    margin: 10px;
+    padding: 20px;
+    justify-content: space-around;
+    font-size: smaller;
+}
+
+#loja{
+    color: black;
+}
+
+#melhor{
+    color: grey;
+}
+
+.fonte1{
+    display: flex;
+align-items: stretch;
+}
+
+.lista1{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+#novidades{
+    color: black;
+}
+
+#veja{
+    color: grey;
+}
+
+.fonte2{
+    display: flex;
+align-items: stretch;
+}
+
+.bloco1{
+    width: 150px;
+    height: 150px;
+border: 1px;
+color: white;
+background-color: black;
+border-radius: 1px;
+
+}
