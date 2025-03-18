@@ -1,24 +1,39 @@
 #hover:hover{
-    color: red;
+    color: rgb(153, 0, 255);
 }
-img{
-    height: 300px;
-    width: 500px;
-}
-#fotos{
-    color: red;
-}
-table,td{
-   
-    border:1px solid
+#minha_foto{
+    height: 500px;
+    width: 600px;
 }
 
-#tudo{
+img{
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+#fotos{
+    color: rgb(153, 0, 255);
+}
+.imagens1{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+.item1{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    width: 250px;
+    margin-top: 10px;
+    font-weight: bold;
+    color: black;
 }
 
 h2{
-    color: olive;
+    color: black;
 }
 
 p{
@@ -31,4 +46,5 @@ body {
     margin: 0;
     background-color: peachpuff; 
     font-family: Arial, sans-serif;
+    text-align: center;
 }
