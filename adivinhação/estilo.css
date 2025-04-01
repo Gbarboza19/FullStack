@@ -1,0 +1,42 @@
+body{
+    background-color: darkorchid;
+}
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+   
+    background: rgb(220, 240, 245);
+  
+
+}
+
+h1 {
+    color: deeppink;
+    
+
+}
+
+input {
+   
+    display: flex;
+    justify-content: center;
+    
+}
+
+button {
+   
+    font-size: 16px;
+    cursor: pointer;
+    
+    margin-top: 10px;
+}
+
+#feedback {
+    font-size: 18px;
+    margin-top: 10px;
+    
+}
