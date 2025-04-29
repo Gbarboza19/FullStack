@@ -1,0 +1,23 @@
+{
+  "name": "servidor",
+  "version": "1.0.0",
+  "description": "meu primeiro servidor web",
+  "main": "servidor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gbarboza19/FullStack.git"
+  },
+  "author": "Gabriel Martins Barboza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gbarboza19/FullStack/issues"
+  },
+  "homepage": "https://github.com/Gbarboza19/FullStack#readme",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "express": "^5.1.0"
+  }
+}

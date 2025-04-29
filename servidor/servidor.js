@@ -11,3 +11,10 @@ server.listen(3000)
 
 
 console.log("Servidor rodando".rainbow);
+
+
+//Exemplos de get e post
+
+app.get('/inicio', function(requisicao, resposta){
+    
+})
