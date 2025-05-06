@@ -1,6 +1,8 @@
 require("colors");
 var http = require('http');
 var express = require('express' ) ;
+var bodyParser = require('  body-parser' );
+var mongodb = require('mongodb' );
 
 var app = express () ;
 app.use(express.static('./public'));
@@ -32,8 +34,13 @@ app.get('/cadastrar', function(requisicao, resposta){
     console.log(nome, email, senha, nascimento);
 })
 
+const MongoClient = mongodb.MongoClient;
 
 
+const uri = `mongodb+srv://gbarboza19:dRlrodRvHgxLUBpf@gabriel.mltgneq.mongodb.net/?retryWrites=true&w=majority&appName=Gabriel`;
+
+
+const client = new MongoClient(uri, { useNewUrlParser: true });
 
 
 // <h2>Exemplo de cadastro de usuario</h2>
