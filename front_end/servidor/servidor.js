@@ -44,3 +44,12 @@ app.get('/cadastrar', function(requisicao, resposta){
 //<p>Nascimento <input type="date" name="data"></p>
 //<input type="submit" value="cadastrar">
 //</form>
+
+//app.get('/cadastrar', function(requisicao, resposta){
+//    let nome = requisicao.query.nome;
+//    let email = requisicao.query.email;
+//    let senha = requisicao.query.senha;
+//    let nascimento = requisicao.query.nascimento;
+
+//    console.log(nome, email, senha, nascimento);
+//})
