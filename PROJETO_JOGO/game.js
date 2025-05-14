@@ -1,53 +1,58 @@
-// Canvas e elementos
+// Setup do Canvas e Contexto
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById("startBtn");
+const resetBtn = document.getElementById("resetBtn");
 
-// Imagens
+// Carregamento das imagens do jogo
 const imgMario = new Image();
 const imgCano = new Image();
 const imgFundo = new Image();
-const imgMoeda = new Image();
 
-// Carregamento das imagens
-imgMario.src = "imagens/mario.gif";
-imgCano.src = "imagens/pipe.png";
+imgMario.src = "imagens/mario.png";
+imgCano.src = "imagens/cano.png";
 imgFundo.src = "imagens/fundo.png";
-imgMoeda.src = "imagens/moeda.png";
 
 // Variáveis do jogo
-let gameRunning = false;
-let gravity = 0.6;
-let velocity = 0;
+let gravity = 0.35; // Gravidade
+let velocity = 0; // Velocidade do Mario
+const chaoAltura = 90; // Altura do chão verde, onde Mario e canos ficam
+
+// Objeto do Mario
 let mario = {
-    x: 50,
-    y: canvas.height - 70, // Alinhar com o "chão"
-    width: 48,
-    height: 48,
-    jumping: false
-  };
-  
+  x: 50,
+  y: canvas.height - 70, // Posição do Mario
+  width: 48,
+  height: 48,
+  jumping: false // Estado de pulo
+};
 
-let pipes = [];
-let coins = [];
-let frame = 0;
-let score = 0;
-let gameSpeed = 2;
+// Variáveis de controle do jogo
+let pipes = []; // Armazena os canos
+let frame = 0; // Contador de frames
+let score = 0; // Pontuação atual
+let maxScore = localStorage.getItem("maxScore") || 0; // Recorde salvo
+let gameSpeed = 1.8; // Velocidade do jogo
+let gameRunning = false; // Status do jogo
+let animationFrameId = null; // ID do frame da animação
 
-// Função que inicializa o jogo
+// Função para resetar o jogo
 function resetGame() {
-  mario.y = 300;
-  velocity = 0;
-  pipes = [];
-  coins = [];
-  frame = 0;
-  score = 0;
-  gameSpeed = 2;
-  gameRunning = true;
-  animate();
+  mario.y = canvas.height - mario.height - chaoAltura; // Reinicia a posição do Mario
+  velocity = 0; // Reinicia a velocidade
+  pipes = []; // Limpa os canos
+  frame = 0; // Reseta o contador de frames
+  score = 0; // Resetar a pontuação
+  gameSpeed = 1.8; // Velocidade inicial do jogo
+  gameRunning = true; // Iniciar o jogo
+  startBtn.disabled = true; // Desabilita o botão de início
+  resetBtn.style.display = "none"; // Esconde o botão de reset
+
+  cancelAnimationFrame(animationFrameId); // Cancela a animação anterior
+  animate(); // Inicia o loop de animação
 }
 
-// Função de fundo
+// Função para desenhar o fundo
 function drawBackground() {
   ctx.drawImage(imgFundo, 0, 0, canvas.width, canvas.height);
 }
@@ -64,35 +69,20 @@ function drawPipes() {
   });
 }
 
-// Função para desenhar as moedas
-function drawCoins() {
-  coins.forEach(coin => {
-    ctx.drawImage(imgMoeda, coin.x - 10, coin.y - 10, 20, 20);
-  });
-}
-
-// Função para gerar canos
+// Função para gerar novos canos
 function spawnPipe() {
-    const height = 30 + Math.random() * 100;
-    pipes.push({
-      x: canvas.width,
-      y: canvas.height - height - 25, // Subtrai a altura da grama
-      width: 40,
-      height: height
-    });
-  }
-  
-
-// Função para gerar moedas
-function spawnCoin() {
-  coins.push({
-    x: canvas.width,
-    y: 200 + Math.random() * 100,
-    radius: 8
-  });
+  const pipeHeight = 30 + Math.random() * 40; // Altura aleatória do cano
+  const pipe = {
+    x: canvas.width, // Inicia fora da tela à direita
+    y: canvas.height - pipeHeight - chaoAltura, // Posição vertical do cano
+    width: 24, // Largura do cano
+    height: pipeHeight, // Altura do cano
+    passed: false // Flag para ver se o Mario já passou do cano
+  };
+  pipes.push(pipe); // Adiciona o cano à lista de canos
 }
 
-// Função para detectar colisão
+// Função para detectar colisões
 function detectCollision(rect1, rect2) {
   return (
     rect1.x < rect2.x + rect2.width &&
@@ -102,100 +92,110 @@ function detectCollision(rect1, rect2) {
   );
 }
 
-// Função de animação do jogo
+// Função de animação que é chamada a cada frame
 function animate() {
-  if (!gameRunning) return;
+  if (!gameRunning) return; // Se o jogo não estiver rodando, não faz nada
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBackground();
-  frame++;
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas a cada frame
+  drawBackground(); // Desenha o fundo
+  frame++; // Incrementa o contador de frames
 
-  if (frame % 90 === 0) spawnPipe();
-  if (frame % 150 === 0) spawnCoin();
+  if (frame % 120 === 0) spawnPipe(); // Gera um novo cano a cada 120 frames
 
-  velocity += gravity;
-  mario.y += velocity;
-  if (mario.y + mario.height > canvas.height - 25) {
-    mario.y = canvas.height - mario.height - 25;
-    velocity = 0;
-    mario.jumping = false;
+  velocity += gravity; // Aplica a gravidade ao Mario
+  mario.y += velocity; // Atualiza a posição vertical do Mario
+
+  // Se o Mario atingir o chão, ele para de cair
+  if (mario.y + mario.height > canvas.height - chaoAltura) {
+    mario.y = canvas.height - mario.height - chaoAltura;
+    velocity = 0; // Reinicia a velocidade
+    mario.jumping = false; // O Mario não está mais pulando
   }
-  
 
-  pipes.forEach(pipe => pipe.x -= gameSpeed);
+  // Atualiza a posição dos canos e verifica a pontuação
+  pipes.forEach(pipe => {
+    pipe.x -= gameSpeed; // Movimento dos canos para a esquerda
+
+    if (!pipe.passed && pipe.x + pipe.width < mario.x) {
+      score++; // Incrementa a pontuação
+      pipe.passed = true; // Marca que o Mario passou pelo cano
+    }
+  });
+
+  // Remove canos que saíram da tela
   pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
 
-  coins.forEach(coin => coin.x -= gameSpeed);
-  coins = coins.filter(coin => coin.x + coin.radius > 0);
-
+  // Verifica se houve colisão
   for (let pipe of pipes) {
     if (detectCollision(mario, pipe)) {
-      gameRunning = false;
-      alert("Game Over! Pontuação: " + score);
+      gameRunning = false; // Se houver colisão, o jogo para
+      cancelAnimationFrame(animationFrameId); // Cancela a animação
+
+      if (score > maxScore) {
+        maxScore = score; // Atualiza o recorde
+        localStorage.setItem("maxScore", maxScore); // Salva o recorde
+      }
+
+      resetBtn.style.display = "inline"; // Exibe o botão de reset
       return;
     }
   }
 
-  coins.forEach((coin, index) => {
-    if (
-      mario.x < coin.x + coin.radius &&
-      mario.x + mario.width > coin.x - coin.radius &&
-      mario.y < coin.y + coin.radius &&
-      mario.y + mario.height > coin.y - coin.radius
-    ) {
-      score++;
-      coins.splice(index, 1);
-    }
-  });
-
+  // Aumenta a velocidade do jogo a cada 300 frames
   if (frame % 300 === 0) gameSpeed += 0.2;
 
-  drawMario();
-  drawPipes();
-  drawCoins();
+  drawMario(); // Desenha o Mario
+  drawPipes(); // Desenha os canos
 
+  // Exibe a pontuação e o recorde
   ctx.fillStyle = "black";
   ctx.font = "20px Arial";
   ctx.fillText("Pontuação: " + score, 10, 25);
+  ctx.fillText("Recorde: " + maxScore, 10, 50);
 
-  requestAnimationFrame(animate);
+  animationFrameId = requestAnimationFrame(animate); // Chama o próximo frame de animação
 }
 
-// Evento de pulo
+// Evento de tecla pressionada (espaço para pular)
 document.addEventListener("keydown", e => {
-  if (e.code === "Space" && !mario.jumping) {
-    velocity = -10;
-    mario.jumping = true;
+  if (e.code === "Space" && !mario.jumping && gameRunning) {
+    velocity = -13; // Dá um impulso para o Mario pular
+    mario.jumping = true; // Marca que o Mario está pulando
   }
 });
 
-// Início do jogo
+// Evento para iniciar o jogo ao clicar no botão "Iniciar"
 startBtn.addEventListener("click", () => {
-  resetGame();
+  if (!gameRunning) {
+    resetGame(); // Reinicia o jogo
+  }
 });
 
-// Esperar todas as imagens carregarem antes de iniciar o jogo
+// Evento para resetar o jogo ao clicar no botão "Resetar"
+resetBtn.addEventListener("click", () => {
+  resetGame(); // Reinicia o jogo
+});
+
+// Função para verificar se as imagens foram carregadas
 function checkImagesLoaded() {
   return new Promise(resolve => {
     let imagesLoaded = 0;
-    const totalImages = 4;
+    const totalImages = 3; // Número total de imagens
 
     const imageLoadHandler = () => {
       imagesLoaded++;
       if (imagesLoaded === totalImages) {
-        resolve();
+        resolve(); // Se todas as imagens foram carregadas, resolve a promise
       }
     };
 
     imgMario.onload = imageLoadHandler;
     imgCano.onload = imageLoadHandler;
     imgFundo.onload = imageLoadHandler;
-    imgMoeda.onload = imageLoadHandler;
   });
 }
 
-// Carregar imagens e iniciar o jogo
+// Quando as imagens estiverem carregadas, exibe o botão "Iniciar"
 checkImagesLoaded().then(() => {
-  console.log("Imagens carregadas. O jogo pode ser iniciado.");
-  startBtn.style.display = "block"; // Mostrar botão para iniciar o jogo
+  startBtn.style.display = "inline";
 });
